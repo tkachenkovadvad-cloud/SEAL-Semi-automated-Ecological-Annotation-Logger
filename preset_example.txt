@@ -1,0 +1,11 @@
+ANIMAL AD01
+ANIMAL AD02
+ANIMAL PUP01
+
+CLASS Move|m
+CLASS Behavior|b
+
+EVENT Move|to_water|1
+EVENT Move|to_ice|2
+EVENT Behavior|scratch|s
+EVENT Behavior|yawn|y

@@ -1,0 +1,726 @@
+SEAL — Semi-automated Ecological Annotation Logger
+USER MANUAL
+
+==================================================================================================================================================
+OVERVIEW
+==================================================================================================================================================
+
+SEAL is a frame-based image annotation and tracking tool designed for time-lapse and survey imagery. The workflow is based on three tabs:
+
+1) Folder & Time      – dataset loading and time mapping
+2) Objects & Events   – definition of tracked objects and event logic
+3) Play               – marking, tracking, event logging, and review
+
+The software operates in two distinct time-mapping modes:
+- MARK & TRACK
+- MARK & VIEW
+
+Both modes are configured in Tab 1 and used identically in Tab 3, but differ in how timestamps are generated and interpreted.
+
+==================================================================================================================================================
+TAB 1 — FOLDER & TIME
+==================================================================================================================================================
+
+This tab defines how image frames are interpreted in time.
+Until Tab 1 is applied, Tab 2 and Tab 3 are disabled.
+
+--------------------------------------------------
+1.1 SELECT FOLDER
+--------------------------------------------------
+
+- Click “Select folder”
+- Choose a folder containing image files (JPG / PNG / TIFF / BMP)
+- Files are:
+  - Loaded in natural sort order
+  - Treated as sequential frames
+
+After loading:
+- Frame list is populated
+- Start frame dropdown becomes active
+
+--------------------------------------------------
+1.2 MODE A — MARK & TRACK
+--------------------------------------------------
+
+Purpose:
+- Continuous temporal tracking
+- One timestamp per frame
+- Designed for sequential surveys and tracking motion
+
+Inputs:
+- Start timestamp (first image)
+- End timestamp (last image)
+- Step (minutes between frames)
+- Start frame
+- Camera name (optional)
+
+Logic:
+- Timestamp for frame i is calculated as:
+  StartTime + (i × StepMinutes)
+- Tracking assumes temporal continuity between frames
+
+Activation:
+- Press “Apply” in the upper (MARK & TRACK) section
+
+Result:
+- MARK & TRACK mode is active
+- Automatic tracking is enabled in Tab 3
+- Confidence-based auto-pause is enabled
+
+--------------------------------------------------
+1.3 MODE B — MARK & VIEW
+--------------------------------------------------
+
+Purpose:
+- Discrete observation / viewing mode
+- No motion assumption
+- Designed for CEMP-style or sparse time sampling
+
+Inputs:
+- Dataset start and end datetime
+- Daily timeframe start (HH:MM:SS)
+- Daily timeframe end (HH:MM:SS)
+- Step (minutes)
+- Start frame
+- Camera name (optional)
+
+Logic:
+- A time grid is generated for each day
+- Frames are mapped onto this grid
+- If more frames than timestamps:
+  - Last timestamp is repeated
+- NO continuous tracking logic is assumed
+
+Activation:
+- Press “Apply” in the lower (MARK & VIEW) section
+
+Result:
+- MARK & VIEW mode is active
+- Tracking is effectively disabled
+- Manual marking and event logging only
+
+--------------------------------------------------
+1.4 WHAT ENABLES WHAT
+--------------------------------------------------
+
+After clicking “Apply” (either mode):
+- Tab 2 becomes active
+- Tab 3 becomes active
+- Frame viewer loads first frame
+- Time mapping is fixed until re-applied
+
+Changing mode RESETS:
+- Playback
+- Frame index
+- Tracking state
+
+==================================================================================================================================================
+TAB 2 — OBJECTS & EVENTS
+==================================================================================================================================================
+
+This tab defines WHAT you track and WHAT you log.
+
+--------------------------------------------------
+2.1 OBJECTS (Animal IDs)
+--------------------------------------------------
+
+- Each object represents one individual or entity
+- IDs are user-defined strings (e.g. A1, Seal_03, WhaleF)
+
+Controls:
+- New ID + “+” -> add object  
+- Select ID + “Remove” -> delete object
+
+Behavior:
+- Each object has its own:
+  - Position (x, y)
+  - Template
+  - Tracking state (tracked / lost / inactive)
+
+--------------------------------------------------
+2.2 EVENT CLASSES
+--------------------------------------------------
+
+Event classes are high-level categories (e.g. BEHAVIOR, POSTURE).
+
+Each class has:
+- Name
+- Hotkey (single character)
+
+Rules:
+- Class hotkeys must be unique
+- Class removal deletes all its events
+
+--------------------------------------------------
+2.3 EVENTS
+--------------------------------------------------
+
+Events belong to a class.
+
+Each event has:
+- Name
+- Hotkey (unique within the class)
+
+Event logging is a two-step keyboard process (see Tab 3).
+
+--------------------------------------------------
+2.4 PRESETS
+--------------------------------------------------
+
+Preset (.txt) files can define:
+- Object IDs
+- Event classes
+- Events and hotkeys
+
+Loading a preset:
+- Replaces current definitions
+- Does NOT affect frame data
+
+==================================================================================================================================================
+TAB 3 — PLAY / MARK / TRACK
+==================================================================================================================================================
+
+This is the operational workspace.
+
+--------------------------------------------------
+3.1 PLAYBACK CONTROL
+--------------------------------------------------
+
+Buttons:
+- Play forward
+- Play back
+
+Keyboard:
+- Space          -> Play / Pause
+- Left Arrow    -> Step one frame backward (paused only)
+- Right Arrow   -> Step one frame forward (paused only)
+
+Rules:
+- Editing is locked during playback
+- Playback direction is preserved on resume
+
+SEAL includes a persistent status bar displayed at the top right corner
+of the main window.
+
+Displayed information:
+- Current frame index and total frame count
+- Real timestamp assigned to the current frame
+
+Functional role:
+- The status bar acts as a control mechanism for:
+  - Timeframe correctness
+  - Time grid alignment
+  - Frame-to-timestamp mapping stability
+
+Behavior:
+- The status bar updates on every frame change
+- Values reflect the active mode (MARK & TRACK or MARK & VIEW)
+- In MARK & VIEW mode, repeated or constant timestamps are visible
+- In MARK & TRACK mode, linear timestamp progression is visible
+
+Warnings and diagnostics:
+- Inconsistent time progression can be visually detected
+- Abnormally dense frames within a short timeframe are observable
+- Single-day grids with unusually high frame counts are detectable
+
+Notes:
+- The status bar does not modify data
+- It provides observational control only
+- It complements console warnings but remains visible at all times
+
+--------------------------------------------------
+3.2 MARKERS (POINTS)
+--------------------------------------------------
+
+Markers represent object positions per frame.
+
+Mouse:
+- Left Click on marker     -> start dragging
+- Drag + Release           -> adjust position
+- Left Click on empty area -> choose object -> place marker
+
+Rules:
+- Markers can be edited only when paused
+- Each adjustment is logged
+- Marker state is stored per frame
+
+--------------------------------------------------
+3.3 ACTIVE OBJECT
+--------------------------------------------------
+
+Only ONE object is active at a time.
+
+Selection methods:
+- Dropdown menu
+- Keyboard slots:
+  Ctrl + 1..9        -> objects 1–9
+  Ctrl + 0           -> object 10
+  Ctrl + Shift + ... -> objects 11–20
+  Ctrl + Alt + ...   -> objects 21–30
+
+The active object is used for:
+- Event logging
+- Comment attachment
+- Visual emphasis
+
+--------------------------------------------------
+3.4 ACTIVE / INACTIVE STATE
+--------------------------------------------------
+
+Key:
+- X -> toggle ACTIVE / INACTIVE
+
+ACTIVE:
+- Object participates in tracking
+- Template is maintained
+
+INACTIVE:
+- Object is ignored by tracking
+- Template is cleared
+- Position remains visible
+
+--------------------------------------------------
+3.5 TRACKING (MARK & TRACK MODE ONLY)
+--------------------------------------------------
+
+Tracking method:
+- Template matching in grayscale
+- Local search window
+
+Parameters:
+
+1) min_conf  -> minimum confidence threshold
+
+Range:
+- Minimum: 0.0
+- Maximum: 1.0
+
+Meaning:
+- min_conf defines the minimum acceptable match confidence returned by the template matching algorithm (cv2.TM_CCOEFF_NORMED).
+
+Behavior:
+- Confidence values are normalized to the range [0.0 … 1.0]
+- Higher values = stricter tracking
+- Lower values = more tolerant but less reliable tracking
+
+Recommended values:
+- 0.45 – 0.55  -> tolerant tracking, noisy scenes
+- 0.55 – 0.65  -> balanced (default: 0.55)
+- 0.65 – 0.75  -> strict tracking, clean imagery
+
+Constraints:
+- If confidence < min_conf:
+  - Object is marked as LOST
+  - Playback auto-pauses
+- Setting min_conf too high may cause frequent auto-pauses
+- Setting min_conf too low may cause false matches
+
+Notes:
+- min_conf is applied per object, per frame
+- Effective only in MARK & TRACK mode
+- Ignored in MARK & VIEW mode
+
+2) search_radius -> pixel radius for search window
+
+Controls:
+- Change values in fields
+- Click “Apply track params”
+
+Behavior:
+- If confidence < min_conf:
+  - Object marked as LOST
+  - Playback auto-pauses
+- User must manually fix marker and resume
+
+Tracking DOES NOT RUN when:
+- MARK & VIEW mode is active
+- Object is INACTIVE
+- Template is missing
+
+--------------------------------------------------
+3.6 EVENT LOGGING
+--------------------------------------------------
+
+Conditions:
+- Playback must be paused
+- Tab 3 must be active
+- Active object must be selected
+
+Procedure:
+1) Press Class hotkey
+   -> system enters “pending class” state
+2) Press Event hotkey
+   -> event is logged
+
+Controls:
+- Esc -> cancel pending class
+
+Logged data:
+- Frame index
+- Timestamp
+- File name
+- Object ID
+- Class name
+- Event name
+
+--------------------------------------------------
+3.7 COMMENTS
+--------------------------------------------------
+
+Key:
+- C -> open comment dialog
+
+Behavior:
+- Comment is logged at current frame/time
+- Linked to active object (if any)
+- Stored as class = COMMENT
+
+--------------------------------------------------
+3.8 ZOOM & VIEW
+--------------------------------------------------
+
+Mouse:
+- Mouse Wheel -> zoom (cursor-centered)
+
+Keyboard:
+- Z -> reset zoom to 1.0
+- R -> reset zoom and pan (fit to canvas)
+
+--------------------------------------------------
+3.9 AUTO-PAUSE LOGIC
+--------------------------------------------------
+
+Auto-pause occurs when:
+- Tracking confidence drops below min_conf
+- End of frame sequence is reached
+
+User action required:
+- Adjust marker
+- Resume with Space
+
+--------------------------------------------------
+3.10 UNDO / REDO (RECENT ACTIONS)
+--------------------------------------------------
+
+SEAL includes an undo / redo mechanism for recent user actions,
+allowing controlled rollback of annotation steps.
+
+Scope:
+- Undo / redo applies to marker placement and marker adjustments
+- Actions are tracked sequentially within the current session
+
+Behavior:
+- Undo reverts the most recent action
+- Redo reapplies the last undone action
+- Undo / redo operates only on user-driven actions
+- Automatic tracking steps are not individually undoable
+
+Limitations:
+- Undo history is session-based and not persistent
+- Undo stack is cleared when:
+  - Dataset is re-applied in Tab 1
+  - Mode is switched (MARK & TRACK ↔ MARK & VIEW)
+  - Application is restarted
+
+Notes:
+- Undo / redo is intended for quick correction of recent mistakes
+- It is not a full history or versioning system
+
+--------------------------------------------------
+3.11 MARK & VIEW MODE (OBSERVATION MODE)
+--------------------------------------------------
+
+MARK & VIEW is a non-tracking observation mode designed for sparse or non-continuous image datasets (e.g. CEMP, fixed cameras, daily sampling).
+
+In this mode, SEAL operates strictly as a viewer and manual annotation tool.
+
+Core principles:
+
+- No temporal continuity is assumed between frames
+- Frames are treated as independent observations
+- No automatic motion tracking is performed
+- All annotations are manual
+
+Behavior in Tab 3:
+
+Playback:
+- Frames can be played forward and backward
+- Playback acts as a timed slideshow only
+- No template matching or prediction occurs
+
+Markers:
+- Markers can be placed, moved, and adjusted manually
+- Marker positions are stored per frame
+- No automatic propagation to adjacent frames
+
+Tracking:
+- Tracking logic is disabled
+- min_conf and search_radius parameters are ignored
+- No auto-pause due to confidence loss
+
+Events:
+- Event logging works identically to MARK & TRACK
+- Requires paused playback and active object
+- Events are logged per frame
+
+Comments:
+- Comments are fully supported
+- Linked to frame timestamp and active object
+
+--------------------------------------------------
+WHAT DOES NOT WORK IN MARK & VIEW:
+--------------------------------------------------
+
+- Automatic tracking
+- Template creation and updates
+- Confidence-based auto-pause
+- LOST / TRACKED state transitions
+- search_radius influence
+- min_conf influence
+
+--------------------------------------------------
+INTENDED USE CASES:
+--------------------------------------------------
+
+- CEMP-style monitoring
+- Fixed-point camera surveys
+- Long-term time-lapse with sparse sampling
+- Presence / absence studies
+- Manual behavioral scoring
+
+--------------------------------------------------
+IMPORTANT NOTES
+--------------------------------------------------
+
+- Switching from MARK & TRACK to MARK & VIEW clears tracking state and templates
+- All marker placement is explicit and manual
+- MARK & VIEW is safe for datasets with irregular time gaps
+
+==================================================================================================================================================
+OUTPUT FILES AND DATA LOGGING
+==================================================================================================================================================
+
+SEAL produces two output files:
+
+- tracks.csv  -> spatial tracking and marker positions
+- events.csv  -> event annotations and comments
+
+Both files are created manually by the user via the “Save CSV” button in Tab 3 (Play).
+
+--------------------------------------------------
+IMPORTANT GENERAL RULES
+--------------------------------------------------
+
+- Output files are NOT auto-saved
+- Output files are overwritten on each save
+- Saving does NOT reset internal state
+- Data is accumulated in memory until saved
+- Output always reflects the full session history
+
+--------------------------------------------------
+OUTPUT LOCATION
+--------------------------------------------------
+
+Both files are saved to:
+
+- The same folder that contains the image frames
+
+File paths:
+- <image_folder>/tracks.csv
+- <image_folder>/events.csv
+
+No custom output directory is supported.
+
+==================================================
+tracks.csv
+==================================================
+
+Purpose:
+- Stores all marker positions and tracking results
+- Includes both automatic tracking and manual adjustments
+
+--------------------------------------------------
+WHEN DATA IS WRITTEN
+--------------------------------------------------
+
+A new track entry is created when:
+- A marker is placed manually
+- A marker is moved (drag + release)
+- Automatic tracking detects a new position
+- An object is adjusted after auto-pause
+
+Each entry represents ONE object at ONE frame.
+
+--------------------------------------------------
+FILE STRUCTURE
+--------------------------------------------------
+
+tracks.csv columns:
+
+- action_n
+  Sequential action counter (1-based, session-wide)
+
+- frame_idx
+  Zero-based frame index
+
+- t_real
+  Real timestamp assigned to the frame
+
+- file_name
+  Image file name
+
+- object_id
+  Object (animal) identifier
+
+- x, y
+  Pixel coordinates of the marker (image space)
+
+- conf
+  Tracking confidence (0.0–1.0)
+  - For manual actions, confidence reflects last known value
+
+- status
+  Object state at this frame:
+  - tracked
+  - lost
+  - inactive
+
+- source
+  Origin of the entry:
+  - detected   -> automatic tracking
+  - adjusted   -> manual placement or correction
+  - empty      -> fallback (rare)
+
+- ts_sys
+  System timestamp when the row was written (ISO format)
+
+- camera
+  Camera name provided in Tab 1
+
+--------------------------------------------------
+UPDATE LOGIC
+--------------------------------------------------
+
+- tracks.csv is NOT updated incrementally on disk
+- All rows are stored in memory (track_log)
+- Pressing “Save CSV” writes the full table at once
+- Re-saving overwrites the previous file completely
+
+--------------------------------------------------
+SPECIAL CASES
+--------------------------------------------------
+
+- If no tracking occurred:
+  - Only the current frame markers are written
+- In MARK & VIEW mode:
+  - All entries have source = adjusted
+  - conf may be 0.0 or last known value
+- Inactive objects:
+  - Are written only if they had valid positions
+
+==================================================
+events.csv
+==================================================
+
+Purpose:
+- Stores all user-defined events and comments
+- Represents semantic annotations, not spatial data
+
+--------------------------------------------------
+WHEN DATA IS WRITTEN
+--------------------------------------------------
+
+An event entry is created when:
+- A class hotkey + event hotkey is completed
+- A comment is saved
+
+Events are logged ONLY when:
+- Playback is paused (for MARK & TRACK mode)
+- Tab 3 is active
+- An active object is selected (except comments)
+
+--------------------------------------------------
+FILE STRUCTURE
+--------------------------------------------------
+
+events.csv columns:
+
+- frame_idx
+  Zero-based frame index
+
+- t_real
+  Real timestamp assigned to the frame
+
+- file_name
+  Image file name
+
+- object_id
+  Active object ID
+  - Empty for comments without active object
+
+- class_name
+  Event class name
+  - COMMENT for comments
+
+- event_name
+  Event name
+  - Empty for comments
+
+- note
+  Free text (comments only)
+
+- camera
+  Camera name provided in Tab 1
+
+--------------------------------------------------
+UPDATE LOGIC
+--------------------------------------------------
+
+- events.csv is NOT written incrementally
+- All events are stored in memory (events_log)
+- Pressing “Save CSV” writes the full file
+- Re-saving overwrites the previous file
+
+==================================================
+MODE-SPECIFIC NOTES
+==================================================
+
+MARK & TRACK MODE:
+- tracks.csv contains both detected and adjusted entries
+- conf values are meaningful
+- status transitions (tracked / lost) are recorded
+- auto-pause events indirectly affect track density
+
+MARK & VIEW MODE:
+- tracks.csv contains manual entries only
+- tracking confidence is not meaningful
+- status is typically “tracked” or unchanged
+- No auto-generated tracking rows exist
+
+==================================================
+DATA INTEGRITY NOTES
+==================================================
+
+- Frame index and file name always match
+- Timestamps depend entirely on Tab 1 configuration
+- Changing mode or re-applying Tab 1 resets future logging
+- Previously logged data remains in memory until restart
+
+==================================================
+RECOMMENDED WORKFLOW
+==================================================
+
+- Save CSV regularly during long sessions
+- Use versioned image folders for revisions
+- Treat CSV files as session snapshots
+- Do not rely on undo or auto-recovery
+
+==================================================================================================================================================
+FINAL NOTES
+==================================================================================================================================================
+
+- The tool is frame-driven, not video-driven
+- No undo functionality exists
+- No automatic save exists
+- Correct workflow order is mandatory:
+  Tab 1 -> Tab 2 -> Tab 3

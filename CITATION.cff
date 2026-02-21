@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: "SEAL — Semi-automated Ecological Annotation Logger"
+version: "1.0.0"
+date-released: 2026-02-20
+authors:
+  - family-names: "Tkachenko"
+    given-names: "Vadym"
+repository-code: "https://github.com/tkachenkovadvad-cloud/SEAL"
+license: "MIT"
+abstract: >
+  SEAL is a lightweight frame-based ecological annotation tool
+  for time-lapse and survey imagery. It supports manual marking,
+  event logging, and optional template-based tracking.
+keywords:
+  - ecological annotation
+  - time-lapse
+  - wildlife monitoring
+  - tracking
+  - event logging

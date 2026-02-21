@@ -1,0 +1,38 @@
+PLAY / NAVIGATION
+Space                – Play / Pause
+Left Arrow           – Step 1 frame backward (paused only)
+Right Arrow          – Step 1 frame forward (paused only)
+
+ACTIVE OBJECT SELECTION
+Ctrl + 1..9          – Select object 1–9
+Ctrl + 0             – Select object 10
+Ctrl + Shift + 1..9  – Select object 11–19
+Ctrl + Shift + 0     – Select object 20
+Ctrl + Alt + 1..9    – Select object 21–29
+Ctrl + Alt + 0       – Select object 30
+
+MARKER STATE
+X                    – Toggle ACTIVE / INACTIVE for current object
+
+EVENT LOGGING (paused, Tab 3 only)
+<Class hotkey>       – Select event class (enter pending state)
+<Event hotkey>       – Log event for active object
+Esc                  – Cancel pending event class
+Ctrl + Z             – Undo
+Ctrl + Y             – Redo
+
+COMMENTS
+C                    – Add comment at current frame/time
+
+VIEW / ZOOM
+Mouse Wheel          – Zoom in / out (cursor-centered)
+Z                    – Reset zoom to 1.0
+R                    – Reset view (zoom + pan)
+
+CANVAS MOUSE
+Left Click           – Select & drag marker / place new marker
+Drag (LMB)           – Move marker
+Release              – Fix marker position (log adjusted track)
+
+SYSTEM
+` (grave)            – Internal modifier for Ctrl slot logic
